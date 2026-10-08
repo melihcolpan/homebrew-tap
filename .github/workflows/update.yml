@@ -1,0 +1,45 @@
+name: Update formulae
+
+# Checks PyPI every day and after a manual trigger; a new release is tested on macOS
+# before the updated formula is committed.
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to use (default: latest on PyPI)"
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Update the formula
+        id: update
+        run: echo "version=$(python scripts/update_formula.py reqstorm ${{ inputs.version }})" >> "$GITHUB_OUTPUT"
+      - name: Install and test
+        if: steps.update.outputs.version != ''
+        env:
+          HOMEBREW_NO_INSTALL_FROM_API: "1"
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+        run: |
+          mkdir -p "$(brew --repository)/Library/Taps/melihcolpan"
+          ln -s "$GITHUB_WORKSPACE" "$(brew --repository)/Library/Taps/melihcolpan/homebrew-tap"
+          brew install --build-from-source melihcolpan/tap/reqstorm
+          brew test melihcolpan/tap/reqstorm
+          brew audit --strict melihcolpan/tap/reqstorm
+      - name: Commit
+        if: steps.update.outputs.version != ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "reqstorm ${{ steps.update.outputs.version }}"
+          git push
