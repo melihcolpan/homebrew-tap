@@ -3,8 +3,8 @@ class Reqstorm < Formula
 
   desc "Send thousands of HTTP requests with rate limits, retries and progress"
   homepage "https://reqstorm.github.io"
-  url "https://files.pythonhosted.org/packages/bf/0e/373570ac0adedce37d19a1e0a04bfeccbd88b656c3ddf6301c38859753f1/reqstorm-2.4.3.tar.gz"
-  sha256 "31f9cba9895222a31df2a2e801ab41d5ffd722b369cbe92a267f129aaad5aeb4"
+  url "https://files.pythonhosted.org/packages/d2/05/b8b0ad4e538de28745b0cc2b650cb93e1dca3791c89a3961ca9476f6f7d6/reqstorm-2.5.0.tar.gz"
+  sha256 "25455543fceb964de5f2a32959b2138d9997b0ad7cf0bda1f65916b5aefb0152"
   license "MIT"
 
   depends_on "python@3.13"
